@@ -1,0 +1,41 @@
+name: Django Docker CI
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's not "main"
+  pull_request:
+    branches:
+      - main  # Change this to your default branch if it's not "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-django-app .
+
+      - name: Run Docker container
+        run: |
+          docker run -d --name my-django-container -p 8000:8000 my-django-app
+
+      - name: Run migrations
+        run: |
+          docker exec my-django-container python manage.py migrate
+
+      - name: Run tests
+        run: |
+          docker exec my-django-container python manage.py test
+
+      - name: Clean up
+        run: |
+          docker stop my-django-container
+          docker rm my-django-container
