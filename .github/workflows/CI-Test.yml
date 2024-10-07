@@ -29,9 +29,7 @@ jobs:
 
       - name: Run Docker container
         run: |
-          docker run -d --name my-django-container \
-            --env-file .env \
-            -p 8000:8000 my-django-app
+          docker run -d --name my-django-container --env-file .env -p 8000:8000 my-django-app
 
       - name: Wait for the container to be ready
         run: |
