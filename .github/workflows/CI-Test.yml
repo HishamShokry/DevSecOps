@@ -25,7 +25,7 @@ jobs:
 
       - name: Create .env file from secret
         run: |
-          echo "${{ secrets.ENV_FILE }}" | base64 --decode > .env
+          echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Run Docker container
         run: |
