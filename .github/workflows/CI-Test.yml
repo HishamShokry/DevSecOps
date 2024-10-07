@@ -3,10 +3,10 @@ name: Django Test CI
 on:
   push:
     branches:
-      - main  # Change this to your default branch if it's not "main"
+      - main
   pull_request:
     branches:
-      - main  # Change this to your default branch if it's not "main"
+      - main
 
 jobs:
   build:
@@ -23,9 +23,20 @@ jobs:
         run: |
           docker build -t my-django-app .
 
+      - name: Create .env file from secret
+        run: |
+          echo "${{ secrets.ENV_FILE }}" | base64 --decode > .env
+
       - name: Run Docker container
         run: |
-          docker run -d --name my-django-container -e DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} -p 8000:8000 my-django-app
+          docker run -d --name my-django-container \
+            --env-file .env \
+            -p 8000:8000 my-django-app
+
+      - name: Wait for the container to be ready
+        run: |
+          echo "Waiting for the Django app to start..."
+          sleep 10  # Adjust sleep time as needed
 
       - name: Run migrations
         run: |
@@ -36,6 +47,7 @@ jobs:
           docker exec my-django-container python manage.py test
 
       - name: Clean up
+        if: always()
         run: |
-          docker stop my-django-container
-          docker rm my-django-container
+          docker stop my-django-container || true
+          docker rm my-django-container || true
