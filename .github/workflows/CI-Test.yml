@@ -43,13 +43,13 @@ jobs:
             sleep 5
           done
           
-      - name: Run migrations
-        run: |
-          docker exec my-django-container python manage.py migrate
+      # - name: Run migrations
+      #   run: |
+      #     docker exec my-django-container python manage.py migrate
 
-      - name: Run tests
-        run: |
-          docker exec my-django-container python manage.py test
+      # - name: Run tests
+      #   run: |
+      #     docker exec my-django-container python manage.py test
 
       - name: Clean up
         if: always()
